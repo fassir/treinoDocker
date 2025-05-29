@@ -223,7 +223,7 @@ Para executar a imagem criada, utilize o código
 docker run -p 8080:8080 exercicio06
 ```
 
-7. Criar uma rede Docker personalizada e faça dois conteineres, um Node.js e um MongoDB, se comunicarem, sugestão, utilize o projeto [React Express + Mongo](https://github.com/docker/awesome-compose/tree/master/react-express-mongodb)
+7. Criar um projeto no docker compose para executar o [React Express + Mongo](https://github.com/docker/awesome-compose/tree/master/react-express-mongodb)
 
 Para criar o projeto é necessário utilizar o docker compose para montar o banco de dados mongodb (mongo) e a aplicação com frontend e backend, cada um em conteineres separados.
 
