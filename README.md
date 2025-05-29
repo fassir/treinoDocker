@@ -49,9 +49,9 @@ No caso específico, houve um erro de firewall que não foi possível corrigir e
 Temos portanto o comando a ser executado para o conteiner
 ```
 docker run
-run -d --name site -v exercicio2:/usr/share/nginx/html -p 8080:80 site 
+run -d --name site -p 8080:80 site 
 ```
-![alt text](image.png)
+![alt text](./imagensMD/image-2.png)
 3. Iniciar um container da imagem ubuntu com um terminal interativo (bash). Naveguar pelo sistema de arquivos e instalar o pacote curl utilizando apt.
 
 Para criar um conteiner ubuntu,  basta criar um arquivo dockerfile do tipo
@@ -74,7 +74,7 @@ Após isto, instalamos o pacote
 ```
 apt install curl
 ```
-
+![alt text](./imagensMD/image-3.png)
 4. Subir um container do MySQL (pode usar a imagem mysql:5.7), utilizando um volume nomeado para armazenar os dados. Criar um banco de dados, parar o container, subir novamente e verifique se os dados persistem.
 Para criar a imagem, criamos o arquivo Dockerfile
 ```
@@ -86,7 +86,7 @@ docker volume create <volume>
 ```
 Para executar o conteiner usamos o codigo
 ```
-docker run --name numero04 -v <volume>:/var/lib/mysql -e MYSQL_ROOT_PASSWORD= <senha> -d numero04
+docker run --name numero04 -v <volume>:/var/lib/mysql -e MYSQL_ROOT_PASSWORD= <senha> -e MYSQL_USER= <usuario> -d numero04
 ```
 onde <senha> será a senha do servidor mysql.
 Para acessar o mysql via terminal, usamos o comando
@@ -145,6 +145,7 @@ e usar a busca
 ```
 SELECT * FROM teste;
 ```
+![alt text](./imagensMD/image-4.png)
 5. Criar um conteiner com a imagem alpine passando uma variável de ambiente chamada MEU_NOME com seu nome. Executar o conteiner e imprimir o valor da variável com o comando echo.
 Para criar a imagem com a variável de ambiente usamos o Dockerfile
 ```
@@ -163,7 +164,7 @@ Para verificar se há realmente a variável global, digite o codigo
 ```
 echo $MEU_NOME
 ```
-
+![alt text](./imagensMD/image-5.png)
 6. Utilizar um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final. Utilizar para praticar o projeto [GS PING](https://github.com/docker/docker-gs-ping) desenvolvido em Golang.
 
 Um multi-stage build baixa camadas de imagens distintas e assim reduzir o tamanho final do conteiner. O exemplo do projeto no link já apresenta o dockerfile.multistage, sendo necessário somente executar o comando 
@@ -219,9 +220,9 @@ ENTRYPOINT ["/docker-gs-ping"]
 
 Para executar a imagem criada, utilize o código
 ```
-docker run -p 8080:8080 exercicio06
+docker run -p 8080:8080 numero06
 ```
-
+![alt text](./imagensMD/image-6.png)
 7. Criar um projeto no docker compose para executar o [React Express + Mongo](https://github.com/docker/awesome-compose/tree/master/react-express-mongodb)
 
 Para criar o projeto é necessário utilizar o docker compose para montar o banco de dados mongodb (mongo) e a aplicação com frontend e backend, cada um em conteineres separados.
@@ -377,6 +378,11 @@ Este dockerfile inicia a execução dos pacotes do npm, configurando o básico e
 
 Como é executado na ordem: mongo -> backend -> frontend no final, o conteiner frontend é que inicia a aplicação e a opção restart: always reinicia caso algum segmento caia (persistencia na aplicação)
 
+A execução do arquivo é
+```
+docker compose up -d 
+```
+![alt text](./imagensMD/image-7.png)
 8. Utilize Docker Compose para configurar uma aplicação com um banco de dados PostgreSQL, use para isso o projeto [pgadmin](https://github.com/docker/awesome-compose/tree/master/postgresql-pgadmin).
 
 O conteiner com o banco de dados exige um docker compose como o exemplo mostrado
@@ -421,8 +427,13 @@ POSTGRES_DB=postgres
 PGADMIN_MAIL=seu@email.com
 PGADMIN_PW=mudeTambem
 ```
+Para executar o arquivo digite o comando
+```
+docker compose up -d
+```
 No arquivo compose há dois conteineres, um para o banco de dados postgres e outro para o pgadmin 
-Acessando o endereço http://localhost:16543 para acessar o pgadmin 
+Acessando o endereço http://localhost:16543 para acessar o pgadmin
+![alt text](./imagensMD/image-8.png)
 
 
 9. Construa uma imagem baseada no Nginx ou Apache, adicionando um site HTML/CSS estático. Utilize a [landing page do Creative Tim](https://github.com/creativetimofficial/material-kit) para criar uma página moderna hospedada no container.
@@ -446,7 +457,7 @@ services:
   web:
     build: .
     ports:
-      - "80:80" 
+      - "8080:80" 
     container_name: apache
     restart: always
 ```
@@ -455,6 +466,7 @@ Além de colocar o arquivo do projeto com nome material-kit-master.zip na mesma 
 docker compose up -d
 ```
 O arquivo docker compose fornece os comandos para o dockerfile executar as tarefas como um docker build e os comandos do dockerfile instrui o restante dos comandos como enviar e extrair os arquivos do arquivo compactado e mover os arquivos para pasta correta.
+![alt text](./imagensMD/image-9.png)
 
 10. Ao rodar containers com o usuário root, você expõe seu sistema a riscos maiores em caso de comprometimento. Neste exercício, você deverá criar um Dockerfile para uma aplicação simples (como um script Python ou um servidor Node.js) e configurar a imagem para rodar com um usuário não-root. Você precisará:
 
@@ -621,7 +633,10 @@ COPY . .
 CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
 ```
 O passo posterior já incluído no arquivo dockerfile acima é na parte de execução, passar os endereços das pastas que contém as instalações dos pacotes adquiridos anteriormente, enviar o arquivo app.py, criar um usuário que não possua muitos privilegios para executar um arquivo externo e fazer uma verificação de atualização, para evitar refazer a camada de construção.
-
+Para executar basta usar o comando
+```
+```
+![alt text](./imagensMD/image-12.png)
 13. Crie um Dockerfile que use a imagem python:3.11-slim, copie um script Python local (app.py) e o execute com CMD. O script pode imprimir a data e hora atual.
 
     a. Crie uma conta no Docker Hub.
@@ -673,3 +688,13 @@ Para enviar a imagem use o codigo
 ```
 docker push fassir/meu-echo:v1
 ```
+![alt text](./imagensMD/image-13.png)
+É possível agora baixar a imagem com o comando
+```
+docker pull fassir/meu-echo:v1
+```
+e para executar usamos o comando
+```
+docker run fassir/meu-echo:v1
+```
+![alt text](./imagensMD/image-14.png)
