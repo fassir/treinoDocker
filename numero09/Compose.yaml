@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  web:
+    build: .  # Constrói a imagem a partir do Dockerfile na pasta atual
+    ports:
+      - "80:80" # Mapeia a porta 80 do host para a porta 80 do contêiner
+    container_name: material-kit-httpd
+    restart: always
