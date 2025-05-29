@@ -17,11 +17,11 @@ docker build . -t exercicio01
 ```
 e para executar a imagem é utilizado o comando
 ```
-docker run exercicio01
+docker run -t exercicio01
 ```
 
 Após a mensagem o conteiner é imediatamente eliminado pois não há processos que persistem a execução do mesmo.
-
+![alt text](./imagensMD/image-1.png)
 2. Criando um container com Nginx que sirva uma página HTML customizada (index.html). Montando um volume local com esse arquivo para que ele apareça na raiz do site (/usr/share/nginx/html).
 è necessario criar o volume
 ```
@@ -30,20 +30,19 @@ docker volume create exercicio02
 Para criar um conteiner que execute o nginx, utilizamos o Dockerfile
 ```
 FROM nginx:1.28.0
+COPY ./index.html /usr/share/nginx/html/index.html
 ```
 e executamos o seguinte comando para construir a imagem
+Para enviar o arquivo index.html usamos o codigo
 ```
 docker build . -t exercicio02
 ```
 e executar a inicialização do conteiner
 ```
-run -d --name site -v exercicio2:/usr/share/nginx/html site
+docker run -d --name site -p:80:80 site
 ```
-Para enviar o arquivo index.html usamos o codigo
-```
-COPY ./index.html /usr/share/nginx/html/index.html
-```
-Com isto é o suficiente para ser acessado a página via http://localhost.
+
+Com isto é o suficiente para ser acessado a página via http://localhost/index.html.
 
 No caso específico, houve um erro de firewall que não foi possível corrigir e assim foi necessario apontar a porta de saída da imagem para outra porta existente no computador hospedeiro. Isto é feito usando a flag `-p 8080:80`, assim a porta 8080 no conteiner será a porta 80 do computador hospedeiro. 
 
@@ -52,7 +51,7 @@ Temos portanto o comando a ser executado para o conteiner
 docker run
 run -d --name site -v exercicio2:/usr/share/nginx/html -p 8080:80 site 
 ```
-
+![alt text](image.png)
 3. Iniciar um container da imagem ubuntu com um terminal interativo (bash). Naveguar pelo sistema de arquivos e instalar o pacote curl utilizando apt.
 
 Para criar um conteiner ubuntu,  basta criar um arquivo dockerfile do tipo
@@ -501,7 +500,7 @@ services:
 O dockerfile irá criar o usuário user, criará o script simples com um loop infinito e um comando para pausar, diminuindo o recurso usado para o reprocessamento da condição inalterada do laço que seria altamente custosa e causaria um alto processamento no conteiner, altera para o usuário criado e executa o comando como o novo usuário.
 
 Usando o comando `docker exec laco_python whoami` temos
-![alt text](image.png)
+![alt text](./imagensMD/image.png)
 
 11. Trivy é uma ferramenta open source para análise de vulnerabilidades em imagens Docker. Neste exercício, você irá analisar uma imagem pública, como python:3.9 ou node:16, em busca de vulnerabilidades conhecidas. Você deverá:
 
