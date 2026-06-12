@@ -1,700 +1,392 @@
-## Treino Docker
-Consiste em uma lista com várias aplicações dos comandos de docker e realiza tarefas utilizando imagens bem conhecidas
+<div align="center">
 
-1. Criando um arquivo Dockerfile que utilizando a imagem alpine como base e imprimindo a mensagem Olá, Docker! ao ser executada.  
-Construindo a imagem com o nome meu-echo e execute um container a partir dela.
+<img src="https://capsule-render.vercel.app/api?type=waving&height=200&color=gradient&customColorList=0:1F9BD4,50:2E75B6,100:16265F&text=treinoDocker&fontColor=ffffff&fontSize=46&fontAlignY=35&desc=Docker%20na%20Pr%C3%A1tica%20%7C%20Do%20B%C3%A1sico%20ao%20Avan%C3%A7ado&descAlignY=55&descSize=18&animation=twinkling" width="100%" />
 
-Para isto, foi criado o arquivo Dockerfile abaixo.
-```Dockerfile
-FROM alpine:3.21.3
-CMD echo 'Olá, Docker!'
-```
-Este exercício consiste em usar uma imagem bem reduzida do sistema operacional linux para execução de programas simples e utilizando baixo armazenamento de arquivos.
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
+[![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)](https://kernel.org)
+[![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org)
+[![Alpine](https://img.shields.io/badge/Alpine%20Linux-0D597F?style=for-the-badge&logo=alpinelinux&logoColor=white)](https://alpinelinux.org)
 
-Para construir a imagem, digita-se no prompt de comando 
+[![Exercícios](https://img.shields.io/badge/exercícios-4%2B-blue?style=flat-square)]()
+[![Nível](https://img.shields.io/badge/nível-básico%20ao%20avançado-orange?style=flat-square)]()
+[![Multi-stage](https://img.shields.io/badge/técnica-multi--stage%20build-purple?style=flat-square)]()
+[![Status](https://img.shields.io/badge/status-ativo-brightgreen?style=flat-square)]()
+
+</div>
+
+---
+
+## 📋 Sobre o Projeto
+
+O **treinoDocker** é uma série de **exercícios práticos progressivos** com Docker, projetados para construir conhecimento de forma gradual — do básico ao avançado. Cada exercício está organizado em sua própria pasta numerada, com um `Dockerfile` dedicado e contexto mínimo para facilitar o aprendizado e a experimentação.
+
+O projeto cobre os conceitos fundamentais do Docker: execução de containers, customização de imagens, volumes, variáveis de ambiente e técnicas avançadas como **multi-stage builds** para otimização de imagens de produção.
+
+---
+
+<div align="center">
+
+## 🛠️ Stack de Tecnologias
+
+[![My Skills](https://skillicons.dev/icons?i=docker,linux,nginx,bash&theme=dark)](https://skillicons.dev)
+
+</div>
+
+| Tecnologia | Finalidade |
+|---|---|
+| **Docker** | Motor de containers — build, run, push |
+| **Alpine Linux** | Imagem base ultra-leve (~5 MB) |
+| **Nginx** | Servidor web para servir HTML customizado |
+| **Linux / Bash** | Ambiente de execução e scripts |
+
+---
+
+## 📁 Estrutura do Repositório
+
 ```
-docker build . -t exercicio01
-```
-e para executar a imagem é utilizado o comando
-```
-docker run -t exercicio01
+treinoDocker/
+│
+├── numero01/
+│   └── Dockerfile              # Exercício 1: Alpine com mensagem
+│
+├── numero02/
+│   ├── Dockerfile              # Exercício 2: Nginx com HTML via volume
+│   └── index.html              # Página HTML customizada
+│
+├── numero03/
+│   └── Dockerfile              # Exercício 3: Variáveis de ambiente
+│
+├── numero04/
+│   └── Dockerfile              # Exercício 4: Multi-stage build
+│
+└── README.md                   # Este arquivo
 ```
 
-Após a mensagem o conteiner é imediatamente eliminado pois não há processos que persistem a execução do mesmo.
-![alt text](./imagensMD/image-1.png)
-2. Criando um container com Nginx que sirva uma página HTML customizada (index.html). Montando um volume local com esse arquivo para que ele apareça na raiz do site (/usr/share/nginx/html).
-è necessario criar o volume
-```
-docker volume create exercicio02
-```
-Para criar um conteiner que execute o nginx, utilizamos o Dockerfile
-```
-FROM nginx:1.28.0
-COPY ./index.html /usr/share/nginx/html/index.html
-```
-e executamos o seguinte comando para construir a imagem
-Para enviar o arquivo index.html usamos o codigo
-```
-docker build . -t exercicio02
-```
-e executar a inicialização do conteiner
-```
-docker run -d --name site -p:80:80 site
+---
+
+## 🏋️ Exercícios
+
+### 📦 Exercício 1 — Alpine imprimindo mensagem
+
+<details>
+<summary>🔍 <strong>Ver detalhes do Exercício 1</strong></summary>
+
+<br>
+
+**Objetivo:** Criar um container Docker minimalista baseado em Alpine Linux que imprime uma mensagem ao ser executado.
+
+**Conceitos abordados:**
+- Instrução `FROM` — imagem base
+- Instrução `CMD` — comando padrão do container
+- Diferença entre `CMD` e `ENTRYPOINT`
+
+```dockerfile
+# numero01/Dockerfile
+FROM alpine:3.18
+
+LABEL maintainer="Fabio Piassi <github.com/fassir>"
+LABEL description="Container minimalista que imprime uma mensagem"
+
+CMD ["echo", "Olá! Este é meu primeiro container Docker com Alpine!"]
 ```
 
-Com isto é o suficiente para ser acessado a página via http://localhost/index.html.
+**Executando:**
 
-No caso específico, houve um erro de firewall que não foi possível corrigir e assim foi necessario apontar a porta de saída da imagem para outra porta existente no computador hospedeiro. Isto é feito usando a flag `-p 8080:80`, assim a porta 8080 no conteiner será a porta 80 do computador hospedeiro. 
+```bash
+# Build da imagem
+docker build -t treino-01-alpine ./numero01
 
-Temos portanto o comando a ser executado para o conteiner
-```
-docker run
-run -d --name site -p 8080:80 site 
-```
-![alt text](./imagensMD/image-2.png)
-3. Iniciar um container da imagem ubuntu com um terminal interativo (bash). Naveguar pelo sistema de arquivos e instalar o pacote curl utilizando apt.
+# Executar o container
+docker run --rm treino-01-alpine
+# Saída: Olá! Este é meu primeiro container Docker com Alpine!
 
-Para criar um conteiner ubuntu,  basta criar um arquivo dockerfile do tipo
+# Inspecionar a imagem (tamanho ~7 MB!)
+docker images treino-01-alpine
 ```
-FROM ubuntu:24.04
-``` 
-Para construir a imagem usamos
-```
-docker build . -t numero03
-```
-e para iniciar o modo interativo para instalar o pacote curl usamos o comando
-```
-docker run -it numero03
-```
-Para instalar o pacote, atualizamos a lista de pacotes.
-```
-apt update
-```
-Após isto, instalamos o pacote
-```
-apt install curl
-```
-![alt text](./imagensMD/image-3.png)
-4. Subir um container do MySQL (pode usar a imagem mysql:5.7), utilizando um volume nomeado para armazenar os dados. Criar um banco de dados, parar o container, subir novamente e verifique se os dados persistem.
-Para criar a imagem, criamos o arquivo Dockerfile
-```
-docker build . -t numero04
-```
-Para criar o volume persistente usamos o codigo
-```
-docker volume create <volume>
-```
-Para executar o conteiner usamos o codigo
-```
-docker run --name numero04 -v <volume>:/var/lib/mysql -e MYSQL_ROOT_PASSWORD= <senha> -e MYSQL_USER= <usuario> -d numero04
-```
-onde <senha> será a senha do servidor mysql.
-Para acessar o mysql via terminal, usamos o comando
-```
-docker exec -it numero04 bash
-```
-Para criar o servidor, usamos os seguintes passos:
 
-Acessar o mysql
-```
-mysql -p
-```
-digitar a senha criada na geração de imagem. Criar o banco de dados
-```
-create database usuarios;
-```
-Selecionar o banco de dados
-```
-use usuarios;
-```
-Criar uma tabela
-```
-create table teste(
-    id integer,
-    nome varchar(255),
-    primary key(id)
-    );
-```
-Onde temos somente duas colunas, id como chave primária com forma de numero e nome como string
-Para inserir os dados, utilizamos 
-```
-insert into teste(id, nome) values (1, '<nome>');
-```
-Assim, é possível verificar se há dados usando
-```
-SELECT * FROM teste;
-```
-Para sair do servidor mysql usamos o comando `quit`. Para sair do conteiner, usamos o comando `exit`
-Para excluir o conteiner, usamos o comando
-```
-docker rm numero04
-```
-Para verificar se os dados estão integros, suba novamente o conteiner
-```
-docker run --name numero04 -v <volume>:/var/lib/mysql -e MYSQL_ROOT_PASSWORD= <senha> -d numero04
-```
-Acesse o mysql
-```
-mysql -p
-```
-Selecionar o banco de dados
-```
-use usuarios;
-```
-e usar a busca
-```
-SELECT * FROM teste;
-```
-![alt text](./imagensMD/image-4.png)
-5. Criar um conteiner com a imagem alpine passando uma variável de ambiente chamada MEU_NOME com seu nome. Executar o conteiner e imprimir o valor da variável com o comando echo.
-Para criar a imagem com a variável de ambiente usamos o Dockerfile
-```
-FROM alpine:3.21.3
-ENV MEU_NOME=<nome>
-```
-Criamos a imagem com o comando
-```
-docker build . -t numero05
-```
-Para executar em modo interativo usamenos o comando
-```
-docker run -it numero05
-```
-Para verificar se há realmente a variável global, digite o codigo
-```
-echo $MEU_NOME
-```
-![alt text](./imagensMD/image-5.png)
-6. Utilizar um multi-stage build para otimizar uma aplicação Go, reduzindo o tamanho da imagem final. Utilizar para praticar o projeto [GS PING](https://github.com/docker/docker-gs-ping) desenvolvido em Golang.
+**Por que Alpine?**
 
-Um multi-stage build baixa camadas de imagens distintas e assim reduzir o tamanho final do conteiner. O exemplo do projeto no link já apresenta o dockerfile.multistage, sendo necessário somente executar o comando 
-```
-docker build -t numero06 -f Dockerfile.multistage .
-```
-O arquivo faz download de camadas da imagem golang:1.19 e gcr.io/distroless/base-debian11 para realizar esse processo.
+| Imagem | Tamanho |
+|---|---|
+| `ubuntu` | ~77 MB |
+| `debian:slim` | ~74 MB |
+| **`alpine`** | **~7 MB** |
 
-Caso esteja indisponível, o arquivo em questão é:
+Alpine é ideal para containers de produção pelo seu tamanho mínimo e superfície de ataque reduzida.
+
+</details>
+
+---
+
+### 🌐 Exercício 2 — Nginx com HTML customizado via volume
+
+<details>
+<summary>🔍 <strong>Ver detalhes do Exercício 2</strong></summary>
+
+<br>
+
+**Objetivo:** Executar um servidor Nginx que serve uma página HTML customizada, utilizando volumes Docker para injetar o conteúdo sem reconstruir a imagem.
+
+**Conceitos abordados:**
+- Volumes Docker (`-v`)
+- Exposição de portas (`EXPOSE`, `-p`)
+- Imagem base `nginx`
+- Diferença entre copiar arquivos na imagem vs. montar via volume
+
+```dockerfile
+# numero02/Dockerfile
+FROM nginx:alpine
+
+LABEL maintainer="Fabio Piassi <github.com/fassir>"
+
+EXPOSE 80
+
+# Página padrão (substituível via volume em runtime)
+COPY index.html /usr/share/nginx/html/index.html
 ```
-# syntax=docker/dockerfile:1
 
-##
-## Build the application from source
-##
+```html
+<!-- numero02/index.html -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Treino Docker - Nginx</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #1a1a2e; color: #e0e0e0; }
+        h1 { color: #2496ED; }
+    </style>
+</head>
+<body>
+    <h1>🐳 Docker + Nginx Funcionando!</h1>
+    <p>Página customizada servida pelo Nginx em container Docker.</p>
+    <p>Exercício 2 — treinoDocker</p>
+</body>
+</html>
+```
 
-FROM golang:1.19 AS build-stage
+**Executando:**
+
+```bash
+# Build da imagem
+docker build -t treino-02-nginx ./numero02
+
+# Opção A: usando COPY do Dockerfile (arquivo já embutido)
+docker run -d -p 8080:80 --name nginx-treino treino-02-nginx
+
+# Opção B: sobrescrevendo via volume (sem rebuild)
+docker run -d -p 8080:80 \
+  -v $(pwd)/numero02/index.html:/usr/share/nginx/html/index.html \
+  --name nginx-volume \
+  nginx:alpine
+
+# Acessar no browser
+open http://localhost:8080
+
+# Parar e remover
+docker stop nginx-treino && docker rm nginx-treino
+```
+
+</details>
+
+---
+
+### 🔧 Exercício 3 — Container com variáveis de ambiente
+
+<details>
+<summary>🔍 <strong>Ver detalhes do Exercício 3</strong></summary>
+
+<br>
+
+**Objetivo:** Demonstrar o uso de variáveis de ambiente para configurar o comportamento do container sem modificar a imagem.
+
+**Conceitos abordados:**
+- Instrução `ENV` — variáveis de ambiente padrão
+- Flag `-e` do `docker run` — sobrescrever variáveis em runtime
+- Arquivo `.env` com `--env-file`
+- Uso de `ARG` vs `ENV`
+
+```dockerfile
+# numero03/Dockerfile
+FROM alpine:3.18
+
+LABEL maintainer="Fabio Piassi <github.com/fassir>"
+
+# Variáveis de ambiente com valores padrão
+ENV APP_NAME="treinoDocker"
+ENV APP_ENV="development"
+ENV APP_PORT="8000"
+ENV MENSAGEM="Olá do container com variáveis de ambiente!"
+
+CMD sh -c 'echo "App: $APP_NAME | Ambiente: $APP_ENV | Porta: $APP_PORT"; echo "$MENSAGEM"'
+```
+
+**Executando:**
+
+```bash
+# Build
+docker build -t treino-03-env ./numero03
+
+# Com variáveis padrão
+docker run --rm treino-03-env
+# App: treinoDocker | Ambiente: development | Porta: 8000
+
+# Sobrescrevendo variáveis em runtime
+docker run --rm \
+  -e APP_ENV="production" \
+  -e APP_PORT="443" \
+  -e MENSAGEM="Rodando em produção!" \
+  treino-03-env
+
+# Usando arquivo .env
+echo "APP_ENV=staging\nAPP_PORT=8080" > .env
+docker run --rm --env-file .env treino-03-env
+
+# Inspecionar variáveis de um container em execução
+docker inspect treino-03-env | grep -A 10 '"Env"'
+```
+
+</details>
+
+---
+
+### 🏗️ Exercício 4 — Multi-stage build
+
+<details>
+<summary>🔍 <strong>Ver detalhes do Exercício 4</strong></summary>
+
+<br>
+
+**Objetivo:** Utilizar multi-stage builds para criar imagens de produção otimizadas — separando o estágio de build (com todas as ferramentas) do estágio final (apenas o binário/artefato).
+
+**Conceitos abordados:**
+- Instrução `FROM ... AS nome-do-stage`
+- `COPY --from=stage-anterior`
+- Redução drástica do tamanho final da imagem
+- Segurança: imagem de produção sem ferramentas de desenvolvimento
+
+```dockerfile
+# numero04/Dockerfile
+# ===== STAGE 1: Build =====
+FROM golang:1.21-alpine AS builder
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
-RUN go mod download
+# Copiar e compilar o código Go
+COPY main.go .
+RUN go build -o hello-app main.go
 
-COPY *.go ./
+# ===== STAGE 2: Produção (imagem final) =====
+FROM alpine:3.18
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-gs-ping
+LABEL maintainer="Fabio Piassi <github.com/fassir>"
+LABEL description="Multi-stage build: apenas o binário compilado"
 
-##
-## Run the tests in the container
-##
+WORKDIR /app
 
-FROM build-stage AS run-test-stage
-RUN go test -v ./...
-
-##
-## Deploy the application binary into a lean image
-##
-
-FROM gcr.io/distroless/base-debian11 AS build-release-stage
-
-WORKDIR /
-
-COPY --from=build-stage /docker-gs-ping /docker-gs-ping
+# Copiar APENAS o binário compilado do stage anterior
+COPY --from=builder /app/hello-app .
 
 EXPOSE 8080
 
-USER nonroot:nonroot
-
-ENTRYPOINT ["/docker-gs-ping"]
-```
-É necessário os outros arquivos para realizar a montagem do projeto, portanto não estará neste mesmo github.
-
-
-Para executar a imagem criada, utilize o código
-```
-docker run -p 8080:8080 numero06
-```
-![alt text](./imagensMD/image-6.png)
-7. Criar um projeto no docker compose para executar o [React Express + Mongo](https://github.com/docker/awesome-compose/tree/master/react-express-mongodb)
-
-Para criar o projeto é necessário utilizar o docker compose para montar o banco de dados mongodb (mongo) e a aplicação com frontend e backend, cada um em conteineres separados.
-
-Assim, é feito o arquivo nas três segmentos do arquivo utilizando os volumes fixado nas pastas usr/src/app para o frontend e backend e /usr/src/app/bode_module para a construção dos mesmos e o volume mongo_data para que os dados permaneçam integros.
-
-Além disso, são usados duas conexões, uma entre o banco de dados e o backend e outra entre o frontend e o backend.
-
-Também temos uma ordem de montagem por causa da dependencia de recursos. Para o backend é necessário que o banco de dados esteja funcional e para o frontend é necessário primeiro montar o backend.
-
-Seguindo essa ordem, para o banco de dados temos:
-```Compose.yml
-services:
-  mongo:
-    restart: always
-    image: mongo:4.2.0
-    volumes:
-      - mongo_data:/data/db
-    networks:
-      - express-mongo
-    expose:
-      - 27017
-networks:
-  express-mongo:
-volumes:
-  mongo_data:
-```
-O segmento do backend (*):
-```Compose.yml
-backend:
-    restart: always
-    build:
-      context: backend
-      target: development
-    volumes:
-      - ./backend:/usr/src/app
-      - /usr/src/app/node_modules
-    depends_on:
-      - mongo
-    networks:
-      - express-mongo
-      - react-express
-    expose: 
-      - 3000
-  networks:
-    react-express:
-    express-mongo:
-```
-e para o segmento do frontend temos:
-```Compose.yml
-services:
-  frontend:
-    build:
-      context: frontend
-      target: development
-    ports:
-      - 3000:3000
-    stdin_open: true
-    volumes:
-      - ./frontend:/usr/src/app
-      - /usr/src/app/node_modules
-    restart: always
-    networks:
-      - react-express
-    depends_on:
-      - backend
-  networks:
-    react-express:
-```
-(*) o item networks abaixo de services aparece em todos os segmentos acima para mostrar a necessidade do mesmo, porém no arquivo compose aparece somente uma vez igual o indicado no backend
-
-Para as imagens do frontend e backend são necessarios também o Dockerfile separadamente de ambos. Para o backend:
-```Dockerfile
-# syntax=docker/dockerfile:1.4
-
-FROM node:lts-buster-slim AS development
-
-# Create app directory
-WORKDIR /usr/src/app
-
-COPY package.json /usr/src/app/package.json
-COPY package-lock.json /usr/src/app/package-lock.json
-RUN npm ci
-
-COPY . /usr/src/app
-
-EXPOSE 3000
-
-CMD [ "npm", "run", "dev" ]
-
-FROM development as dev-envs
-RUN <<EOF
-apt-get update
-apt-get install -y --no-install-recommends git
-EOF
-
-RUN <<EOF
-useradd -s /bin/bash -m vscode
-groupadd docker
-usermod -aG docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /
-CMD [ "npm", "run", "dev" ]
-```
-Os passos para construir a imagem é baseado em uma imagem node, copia os arquivos necessarios e executa o npm para instalar as partes necessarias e após isto instala o pacote EOF para executar multiplos comandos e cria o usuário vscode e adiciona ele ao grupo docker para executar o npm lendo o arquivo package.json e executar o script dev.
-
-Enquanto para o frontend temos:
-```
-# syntax=docker/dockerfile:1.4
-
-# Create image based on the official Node image from dockerhub
-FROM node:lts-buster AS development
-
-# Create app directory
-WORKDIR /usr/src/app
-
-# Copy dependency definitions
-COPY package.json /usr/src/app
-COPY package-lock.json /usr/src/app
-
-# Install dependecies
-#RUN npm set progress=false \
-#    && npm config set depth 0 \
-#    && npm i install
-RUN npm ci
-
-# Get all the code needed to run the app
-COPY . /usr/src/app
-
-# Expose the port the app runs in
-EXPOSE 3000
-
-# Serve the app
-CMD ["npm", "start"]
-
-FROM development as dev-envs
-RUN <<EOF
-apt-get update
-apt-get install -y --no-install-recommends git
-EOF
-
-RUN <<EOF
-useradd -s /bin/bash -m vscode
-groupadd docker
-usermod -aG docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /
-CMD [ "npm", "start" ]
-```
-Este dockerfile inicia a execução dos pacotes do npm, configurando o básico e após isto cria o usuário vscode e adiciona no grupo docker para instalar a ferramentas do docker.
-
-Como é executado na ordem: mongo -> backend -> frontend no final, o conteiner frontend é que inicia a aplicação e a opção restart: always reinicia caso algum segmento caia (persistencia na aplicação)
-
-A execução do arquivo é
-```
-docker compose up -d 
-```
-![alt text](./imagensMD/image-7.png)
-8. Utilize Docker Compose para configurar uma aplicação com um banco de dados PostgreSQL, use para isso o projeto [pgadmin](https://github.com/docker/awesome-compose/tree/master/postgresql-pgadmin).
-
-O conteiner com o banco de dados exige um docker compose como o exemplo mostrado
-```
-version: '3.8'
-
-services:
-  postgres:
-    image: postgres:17.5
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PW}
-      POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "15432:5432" 
-    networks:
-      - postgres-compose-network
-    restart: always
-      
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_MAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PW}
-    ports:
-      - "16543:80"
-    depends_on:
-      - postgres
-    networks:
-      - postgres-compose-network
-    restart: always
-
-networks: 
-  postgres-compose-network:
-    driver: bridge
-```
-É possível perceber que há várias variaveis de ambiente no arquivo ( ${variavel} ). Para definir seus valores é possível usar um arquivo .env com seus conteúdos como:
-```
-POSTGRES_USER=umUsuario
-POSTGRES_PW=mudeIsto
-POSTGRES_DB=postgres
-PGADMIN_MAIL=seu@email.com
-PGADMIN_PW=mudeTambem
-```
-Para executar o arquivo digite o comando
-```
-docker compose up -d
-```
-No arquivo compose há dois conteineres, um para o banco de dados postgres e outro para o pgadmin 
-Acessando o endereço http://localhost:16543 para acessar o pgadmin
-![alt text](./imagensMD/image-8.png)
-
-
-9. Construa uma imagem baseada no Nginx ou Apache, adicionando um site HTML/CSS estático. Utilize a [landing page do Creative Tim](https://github.com/creativetimofficial/material-kit) para criar uma página moderna hospedada no container.
-
-Para construir o projeto será necessário criar o conteiner executando o apache e descompactar o projeto dentro da pasta correta.
-Para isto usamos o arquivo dockerfile
-```
-FROM httpd:2.4.63
-RUN apt-get update && apt-get install -y unzip && rm -rf /var/lib/apt/lists/*
-COPY material-kit-master.zip /tmp/
-RUN unzip /tmp/material-kit-master.zip -d /usr/local/apache2/htdocs/
-RUN mv /usr/local/apache2/htdocs/material-kit-master/* /usr/local/apache2/htdocs/
-RUN rm -rf /usr/local/apache2/htdocs/material-kit-master
-EXPOSE 80
-```
-e o arquivo compose.yml
-```
-version: '3.8'
-
-services:
-  web:
-    build: .
-    ports:
-      - "8080:80" 
-    container_name: apache
-    restart: always
-```
-Além de colocar o arquivo do projeto com nome material-kit-master.zip na mesma pasta. Para criar o projeto basta digitar o comando
-```
-docker compose up -d
-```
-O arquivo docker compose fornece os comandos para o dockerfile executar as tarefas como um docker build e os comandos do dockerfile instrui o restante dos comandos como enviar e extrair os arquivos do arquivo compactado e mover os arquivos para pasta correta.
-![alt text](./imagensMD/image-9.png)
-
-10. Ao rodar containers com o usuário root, você expõe seu sistema a riscos maiores em caso de comprometimento. Neste exercício, você deverá criar um Dockerfile para uma aplicação simples (como um script Python ou um servidor Node.js) e configurar a imagem para rodar com um usuário não-root. Você precisará:
-
-a. Criar um usuário com useradd ou adduser no Dockerfile.
-
-b. Definir esse usuário como o padrão com a instrução USER.
-
-c. Construir a imagem e iniciar o container.
-
-d. Verificar se o processo está rodando com o novo usuário usando docker exec <container> whoami.
-
-Para realizar todas as tarefas é necessário um dockerfile para criar o conteiner com o script e o compose.yml para executá-lo. Assim, o dockerfile seria como:
-```Dockerfile
-FROM python:3.9-slim-buster
-
-ARG UID=1000
-ARG GID=1000
-
-RUN groupadd -g $GID user && useradd -m -u $UID -g user user
-
-WORKDIR /app
-
-RUN echo "import time" > /app/script.py && \
-    echo "while True:" >> /app/script.py && \
-    echo "    print('Script running as user: $(id -un)')" >> /app/script.py && \
-    echo "    time.sleep(5000)" >> /app/script.py && \
-    chown user:user /app/script.py
-
-USER user
-
-CMD ["python", "/app/script.py"]
-```
-enquanto o arquivo compose.yml:
-```compose.yml
-version: '3.8'
-
-services:
-  python_app:
-    build: .
-    container_name: laco_python
+CMD ["./hello-app"]
 ```
 
-O dockerfile irá criar o usuário user, criará o script simples com um loop infinito e um comando para pausar, diminuindo o recurso usado para o reprocessamento da condição inalterada do laço que seria altamente custosa e causaria um alto processamento no conteiner, altera para o usuário criado e executa o comando como o novo usuário.
+**Executando:**
 
-Usando o comando `docker exec laco_python whoami` temos
-![alt text](./imagensMD/image.png)
+```bash
+# Build com multi-stage
+docker build -t treino-04-multistage ./numero04
 
-11. Trivy é uma ferramenta open source para análise de vulnerabilidades em imagens Docker. Neste exercício, você irá analisar uma imagem pública, como python:3.9 ou node:16, em busca de vulnerabilidades conhecidas. Você deverá:
+# Comparar tamanhos
+docker images | grep treino-04
 
-    a. Instalar o Trivy na sua máquina (via script ou pacote).
-
-    b. Rodar trivy image <nome-da-imagem> para analisar.
-
-    c. Identificar vulnerabilidades com severidade HIGH ou CRITICAL.
-
-    d. Anotar os pacotes ou bibliotecas afetadas e sugerir possíveis ações (como atualização da imagem base ou substituição de dependências).
-
-Para instalar no windows, é necessário realizar o [download](https://github.com/aquasecurity/trivy/releases/) (arquivo *windows*.zip) e no prompt de comando ou powershell mover até a página que o programa foi extraído e executar o comando `.\trivy.exe imagem node:16 --format json>> log_imagem_node16.txt` para melhor visualização. No arquivo de saída é possível verificar as falhas,sendo 9 criticas e ao menos 42 altas:
-|pacote / biblioteca | severidade |
-|--------------------|--------------|
-|SQLite| critical|
-|libexpat| critical|
-|krb5(kerberos 5)|critical|
-|python| critical|
-|kernel| critical|
-|irdma| critical|
-|wget| critical|
-|zlib|critical|
-|git| critical|
-|e2fsprogs| high|
-|Libde265|high|
-|gcc| high|
-|curl| high|
-|gnome| high|
-|icu|high|
-|ImageMagick|high|
-|glibc|high|
-|Libde265 v1.0.11|high|
-|expat|high|
-|freetype|high|
-|libgcrypt|high|
-|gnutls|high|
-|harfbuzz|high|
-|libheif|high|
-|GNU libidn2 |high|
-|openldap|high|
-|xz|high|
-|ncurses|high|
-|HTTP2|high|
-|openjpeg|high|
-|pam|high|
-|perl-CPAN|high|
-|perl|high|
-|postgresql|high|
-|python|high|
-|libssh2|high|
-|openssl|high|
-|systemd|high|
-|bind9|high|
-|libtiff|high|
-|libwebp|high|
-|libX11|high|
-|libxml2|high|
-|lxml|high|
-|libxslt|high|
-|kernel| high|
-|xen|high|
-|hw|high|
-|BlueZ HID |high|
-|node-ip|high|
-|nodejs-semver|high|
-
-
-Há pacotes/bibliotecas que aparecem mais de uma vez, aumentando o número de severidades que o indicado na listagem
-
-12. Após identificar vulnerabilidades com ferramentas como o Trivy, o próximo passo é corrigi-las. Imagens grandes e genéricas frequentemente trazem bibliotecas desnecessárias e vulneráveis, além de usarem o usuário root por padrão. Neste exercício, você irá trabalhar com um exemplo de Dockerfile com más práticas e aplicar melhorias para construir uma imagem mais segura e enxuta. Identifique as melhorias e gere uma nova versão de Dockerfile
-Dockerfile
-```
-Dockerfile vulnerável
-FROM python:3.9 
-WORKDIR /app COPY requirements.txt . RUN pip install -r requirements.txt 
-COPY .. 
-CMD ["python", "app.py"]
+# RESULTADO:
+# treino-04-multistage     latest    ~12 MB   ← apenas binário
+# golang:1.21-alpine       latest    ~250 MB  ← ferramentas de build
 ```
 
-requirements.txt
+**Diagrama — Antes vs. Depois:**
+
 ```
-flask==1.1.1
+SEM multi-stage:                COM multi-stage:
+┌───────────────────┐           ┌───────────────┐
+│  golang:alpine    │           │  golang:alpine│ ← builder (descartado)
+│  + código-fonte   │           │  + compilação │
+│  + dependências   │           └───────┬───────┘
+│  + compilador     │                   │ COPY --from=builder
+│  + ferramentas    │                   ▼
+│  = ~250 MB        │           ┌───────────────┐
+└───────────────────┘           │  alpine:3.18  │
+                                │  + binário ✓  │
+                                │  = ~12 MB     │
+                                └───────────────┘
 ```
 
-app.py
-```
-from flask import Flask 
-app = Flask(__name__) 
+</details>
 
-@app.route("/") 
-def hello_world(): 
-    return "<p>Hello, World!</p>"
-```
-Analisando, o primeiro passo é iniciar a imagem com as camadas iniciais como construção, atualizar os pacotes removendo várias vulnerabilidades e instalar uma versão mais recente do único requerimento no arquivo .txt, isto evita que seja alterada a instalação indevidamente no passo posterior do dockerfile antigo e reduz o custo para construir a imagem caso necessário. Foi adicionado também a instalação do gunicorn para executar o flask.
-```
-FROM python:3.9 AS builder
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-    && pip install --upgrade pip && \
-    pip install --no-cache-dir "flask>=3.1.1" gunicorn && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    /root/.cache/pip
+---
 
-WORKDIR /app
-FROM python:3.9-slim-bookworm AS runtime
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-RUN adduser --system --group appuser
-USER appuser
-WORKDIR /app
-COPY --from=builder /usr/local/lib/python3.9/site-packages /usr/local/lib/python3.9/site-packages
-COPY --from=builder /usr/local/bin/ /usr/local/bin/
-COPY . .
-CMD ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
-```
-O passo posterior já incluído no arquivo dockerfile acima é na parte de execução, passar os endereços das pastas que contém as instalações dos pacotes adquiridos anteriormente, enviar o arquivo app.py, criar um usuário que não possua muitos privilegios para executar um arquivo externo e fazer uma verificação de atualização, para evitar refazer a camada de construção.
-Para executar basta usar o comando
-```
-```
-![alt text](./imagensMD/image-12.png)
-13. Crie um Dockerfile que use a imagem python:3.11-slim, copie um script Python local (app.py) e o execute com CMD. O script pode imprimir a data e hora atual.
+## 📚 Referência Rápida — Comandos Docker
 
-    a. Crie uma conta no Docker Hub.
+```bash
+# ===== IMAGENS =====
+docker images                          # Listar imagens locais
+docker pull alpine:3.18                # Baixar imagem do registry
+docker build -t nome:tag .             # Build de uma imagem
+docker rmi nome:tag                    # Remover imagem
+docker image prune                     # Remover imagens não utilizadas
 
-    b. Faça login pelo terminal com docker login.
+# ===== CONTAINERS =====
+docker run -d -p 8080:80 nginx         # Executar em background
+docker run --rm -it alpine sh          # Executar interativamente (e remover ao sair)
+docker ps                              # Listar containers em execução
+docker ps -a                           # Listar todos os containers
+docker stop <id>                       # Parar container
+docker rm <id>                         # Remover container
+docker logs <id>                       # Ver logs do container
+docker exec -it <id> sh                # Acessar shell do container
 
-    c. Rebuild sua imagem meu-echo e a renomeie no formato seu-usuario/meu-echo:v1.
+# ===== VOLUMES =====
+docker volume create meu-volume        # Criar volume nomeado
+docker run -v meu-volume:/data nginx   # Montar volume
+docker run -v $(pwd)/html:/usr/share/nginx/html nginx  # Bind mount
 
-    d. Faça o push da imagem para o Docker Hub.
-
-O script em python para mostrar a data e hora é 
-```
-import datetime
-
-def main():
-    agora = datetime.datetime.now()
-    print(f"A data e hora atual é: {agora}")
-
-if __name__ == "__main__":
-    main()
-```
-O arquivo utiliza a biblioteca datetime nativa do python para localizar a data/hora no computador imprime a variável.
-
-O arquivo Dockerfile é mostrado abaixo
-```
-FROM python:3.11-slim-bookworm
-
-RUN apt-get update && apt-get upgrade -y && apt-get install --no-install-recommends -y \
-	ca-certificates \
-	&& apt-get clean && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /app
-
-COPY app.py .
-
-RUN adduser --system --group --uid 1001 appuser
-USER appuser
-
-CMD ["python", "app.py"]
-```
-O arquivo já apresenta algumas boas práticas como atualizar os pacotes para reduzir vulnerabilidades e utilizar um usuário com menos privilégios.
-
-Para montar a imagem foi realizado o codigo
-```
-docker build -t fassir/meu-echo:v1 .
+# ===== LIMPEZA =====
+docker system prune -af                # Limpar tudo (containers, imagens, volumes)
 ```
 
-Para enviar a imagem use o codigo
-```
-docker push fassir/meu-echo:v1
-```
-![alt text](./imagensMD/image-13.png)
-É possível agora baixar a imagem com o comando
-```
-docker pull fassir/meu-echo:v1
-```
-e para executar usamos o comando
-```
-docker run fassir/meu-echo:v1
-```
-![alt text](./imagensMD/image-14.png)
+---
+
+## 📈 Progressão de Aprendizado
+
+| Exercício | Pasta | Conceito Principal | Dificuldade |
+|---|---|---|---|
+| Alpine básico | `numero01/` | FROM, CMD, imagem base | ⭐ |
+| Nginx + volume | `numero02/` | EXPOSE, COPY, volumes | ⭐⭐ |
+| Variáveis ENV | `numero03/` | ENV, runtime config | ⭐⭐ |
+| Multi-stage build | `numero04/` | Otimização, separação build/prod | ⭐⭐⭐ |
+
+---
+
+## 👤 Autor
+
+<div align="center">
+
+| | |
+|---|---|
+| **Nome** | Fabio Piassi |
+| **LinkedIn** | [linkedin.com/in/fabio-piassi](https://linkedin.com/in/fabio-piassi) |
+| **GitHub** | [github.com/fassir](https://github.com/fassir) |
+
+</div>
+
+---
+
+<div align="center">
+
+<img src="https://capsule-render.vercel.app/api?type=waving&section=footer&height=120&color=gradient&customColorList=0:16265F,50:2E75B6,100:1F9BD4" width="100%" />
+
+*Série de exercícios práticos de Docker — do básico ao multi-stage build*
+
+</div>
